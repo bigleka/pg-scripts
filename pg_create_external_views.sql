@@ -38,6 +38,13 @@ BEGIN
                (SELECT STRING_AGG(column_name || ' ' ||
                                  CASE
                                      WHEN data_type = 'character varying' THEN 'VARCHAR(' || character_maximum_length || ')'
+                                     WHEN data_type = 'numeric' THEN 'NUMERIC(' || numeric_precision || ', ' || numeric_scale || ')'
+                                     WHEN data_type IN ('timestamp', 'timestamp with time zone') THEN 'TIMESTAMP'
+                                     WHEN data_type = 'interval' THEN 'INTERVAL'
+                                     WHEN data_type IN ('json', 'jsonb') THEN 'JSONB'
+                                     WHEN data_type = 'boolean' THEN 'BOOLEAN'
+                                     WHEN data_type = 'bytea' THEN 'BYTEA'
+                                     WHEN data_type LIKE 'ARRAY%' THEN 'ARRAY'  -- Tratar arrays de forma específica se necessário
                                      ELSE data_type
                                  END, ', ')
                 FROM information_schema.columns
